@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-for="track in trackList" :key="track.title">
-      <track-entry :track="track"></track-entry>
+    <div v-for="track in trackList" :key="track.index">
+      <track-entry :track="track" @trackchosen="switchPlaylist"></track-entry>
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     currentAlbum() {
-      return this.$store.state.currentAlbum;
+      return this.$store.state.viewedAlbum;
     },
   },
   methods: {
@@ -38,15 +38,15 @@ export default {
         )
         .then((response) => {
           let tracks = response.data;
-          tracks.sort((a, b) => {
-            if (a.index && b.index) {
-              return a.index - b.index;
-            }
-            return a.title.localeCompare(b.title);
-          });
+          tracks.sort((a, b) => a.index - b.index);
           this.trackList = tracks;
         })
         .catch((error) => console.log(error));
+    },
+    switchPlaylist() {
+      if (this.$store.state.currentPlaylist !== this.trackList) {
+        this.$store.commit('switchPlaylist', this.trackList);
+      }
     },
   },
   watch: {

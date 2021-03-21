@@ -6,7 +6,10 @@
       </div>
     </div>
     <div id="album-view">
-      <album-view v-if="selectedAlbum"></album-view>
+      <album-view v-if="viewedAlbum"></album-view>
+    </div>
+    <div id="player-controls">
+      <player-controls></player-controls>
     </div>
   </div>
 </template>
@@ -14,6 +17,7 @@
 <script>
 import AlbumCover from './components/AlbumCover.vue';
 import AlbumView from './components/AlbumView.vue';
+import PlayerControls from './components/PlayerControls.vue';
 
 export default {
   name: 'App',
@@ -24,13 +28,14 @@ export default {
     albums() {
       return this.$store.state.albums;
     },
-    selectedAlbum() {
-      return this.$store.state.currentAlbum;
+    viewedAlbum() {
+      return this.$store.state.viewedAlbum;
     },
   },
   components: {
     AlbumCover,
     AlbumView,
+    PlayerControls,
   },
 };
 </script>
@@ -42,17 +47,26 @@ body {
 }
 
 #covers-slider {
+  box-sizing: border-box;
+  height: 175px;
   background-color: rosybrown;
   padding: 10px;
   display: flex;
   justify-content: space-around;
+  overflow-x: auto;
 }
 
 .cover {
   display: inline-block;
+  margin: auto;
 }
 
 #album-view {
-  background-color: lightgray;
+  overflow-y: scroll;
+  height: calc(100vh - 175px - 200px);
+}
+
+#player-controls {
+  width: 100%;
 }
 </style>

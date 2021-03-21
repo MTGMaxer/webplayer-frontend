@@ -1,4 +1,7 @@
 export default {
   albums: [],
-  currentAlbum: '',
+  viewedAlbum: '',
+  currentPlaylist: [],
+  currentPlayIndex: 1,
+  musicPaused: true,
 };

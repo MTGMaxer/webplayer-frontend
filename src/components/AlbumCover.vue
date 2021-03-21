@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     changeAlbum() {
-      this.$store.commit('setCurrentAlbum', this.album);
+      this.$store.commit('setViewedAlbum', this.album);
     },
   },
 };
