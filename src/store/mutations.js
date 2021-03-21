@@ -1,8 +1,7 @@
-/* eslint-disable prefer-destructuring */
 export default {
   setAlbums(state, albums) {
     state.albums = albums;
-    state.viewedAlbum = albums[0];
+    [state.viewedAlbum] = albums;
   },
   setViewedAlbum(state, album) {
     state.viewedAlbum = album;
@@ -18,18 +17,17 @@ export default {
   },
   goForward(state) {
     let index = state.currentPlayIndex + 1;
-    if (index > Math.max(state.currentPlaylist.map((track) => track.index))) {
-      index = Math.min(state.currentPlaylist.map((track) => track.index));
+    let maxIndex = state.currentPlaylist.reduce((max, cur) => Math.max(max, cur.index), 0);
+    if (index > maxIndex) {
+      index = state.currentPlaylist.reduce((min, cur) => Math.min(min, cur.index), maxIndex);
     }
-    console.log(`Changing from ${state.currentPlayIndex} to ${index}`);
     state.currentPlayIndex = index;
   },
   goBackwards(state) {
     let index = state.currentPlayIndex - 1;
-    if (index < Math.min(state.currentPlaylist.map((track) => track.index))) {
-      index = Math.max(state.currentPlaylist.map((track) => track.index));
+    if (index < state.currentPlaylist.reduce((min, cur) => Math.min(min, cur.index), Infinity)) {
+      index = state.currentPlaylist.reduce((max, cur) => Math.max(max, cur.index), 0);
     }
-    console.log(`Changing from ${state.currentPlayIndex} to ${index}`);
     state.currentPlayIndex = index;
   },
 };
