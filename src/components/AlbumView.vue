@@ -1,21 +1,28 @@
 <template>
   <div>
-    <div v-for="track in trackList" :key="track.index">
-      <track-entry :track="track" @trackchosen="switchPlaylist"></track-entry>
-    </div>
+    <table>
+      <tr>
+        <th></th>
+        <th class="header">
+          {{ currentAlbum }}
+        </th>
+        <th></th>
+        <th></th>
+      </tr>
+      <track-entry
+        v-for="track in trackList"
+        :key="track.index"
+        :track="track"
+        @trackchosen="switchPlaylist"
+      ></track-entry>
+    </table>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
 import TrackEntry from './TrackEntry.vue';
 
 export default {
-  data() {
-    return {
-      trackList: [],
-    };
-  },
   components: {
     TrackEntry,
   },
@@ -23,42 +30,51 @@ export default {
     currentAlbum() {
       return this.$store.state.viewedAlbum;
     },
+    trackList() {
+      return this.$store.state.albumTrackList[this.currentAlbum];
+    },
   },
   methods: {
-    fetchTracks(albumName) {
-      axios
-        .post(
-          'http://localhost:3000/getAlbumContent',
-          { albumName },
-          {
-            headers: {
-              'Content-Type': 'text/plain',
-            },
-          },
-        )
-        .then((response) => {
-          let tracks = response.data;
-          tracks.sort((a, b) => a.index - b.index);
-          this.trackList = tracks;
-        })
-        .catch((error) => console.log(error));
-    },
     switchPlaylist() {
       if (this.$store.state.currentPlaylist !== this.trackList) {
         this.$store.commit('switchPlaylist', this.trackList);
       }
     },
+    fetchTracks() {
+      if (this.currentAlbum && !this.trackList) {
+        this.$store.dispatch('fetchTracksForAlbum', this.currentAlbum);
+      }
+    },
   },
   watch: {
-    currentAlbum(newValue) {
-      this.fetchTracks(newValue);
+    currentAlbum() {
+      this.fetchTracks();
+      console.log(this.currentAlbum);
+      console.log(this.trackList);
+      console.log('----------------------------------');
     },
   },
   mounted() {
-    this.fetchTracks(this.currentAlbum);
+    this.fetchTracks();
   },
 };
 </script>
 
 <style scoped>
+th {
+  text-align: center;
+  border-bottom: 1px solid gray;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid gray;
+}
+
+.header {
+  height: 60px;
+  font-family: serif;
+  font-size: 1.5em;
+}
 </style>

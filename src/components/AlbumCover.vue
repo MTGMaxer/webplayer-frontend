@@ -19,6 +19,7 @@ export default {
   methods: {
     changeAlbum() {
       this.$store.commit('setViewedAlbum', this.album);
+      this.$emit('coverchosen');
     },
   },
 };

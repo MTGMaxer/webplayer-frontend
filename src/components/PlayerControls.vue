@@ -85,11 +85,13 @@ export default {
         this.$refs.player.play();
       }
     },
-    currentTrack() {
-      this.$refs.audiosrc.src = this.trackUrl;
-      this.$refs.player.load();
-      this.$refs.player.play();
-      this.$store.commit('switchPlayingState', false);
+    currentTrack(newT, oldT) {
+      if ((!oldT && newT) || newT.filename !== oldT.filename || newT.albumName !== oldT.albumName) {
+        this.$refs.audiosrc.src = this.trackUrl;
+        this.$refs.player.load();
+        this.$refs.player.play();
+        this.$store.commit('switchPlayingState', false);
+      }
     },
   },
 };

@@ -2,6 +2,12 @@ export default {
   setAlbums(state, albums) {
     state.albums = albums;
     [state.viewedAlbum] = albums;
+    let emptyTrackList = {};
+    albums.forEach((album) => { emptyTrackList[album] = null; });
+    state.albumTrackList = emptyTrackList;
+  },
+  addAlbumTrackList(state, { trackList, albumName }) {
+    state.albumTrackList[albumName] = trackList;
   },
   setViewedAlbum(state, album) {
     state.viewedAlbum = album;
@@ -29,5 +35,13 @@ export default {
       index = state.currentPlaylist.reduce((max, cur) => Math.max(max, cur.index), 0);
     }
     state.currentPlayIndex = index;
+  },
+  setRemotePlaylist(state, playlist) {
+    state.remotePlaylist = playlist;
+    state.remotePlaylist.sort((a, b) => a.index - b.index);
+  },
+  addTrackToPlaylist(state, track) {
+    state.remotePlaylist.push(track);
+    state.remotePlaylist.sort((a, b) => a.index - b.index);
   },
 };

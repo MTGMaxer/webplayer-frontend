@@ -1,19 +1,28 @@
 <template>
-  <div class="track-entry" :style="highlightStyle">
-    <div class="track-data">
-      <span class="album-title">{{ track.albumTitle }}</span>
-      <span class="track-title">{{ track.title }}</span>
-      <span class="file-size">{{ trackSizeMb }} MB</span>
-    </div>
-    <div class="track-button">
+  <tr class="track-entry" :style="highlightStyle">
+    <td class="album-title">
+      {{ track.albumTitle }}
+    </td>
+    <td class="track-title">
+      {{ track.title }}
+    </td>
+    <td class="file-size">{{ trackSizeMb }} MB</td>
+    <td class="track-buttons">
       <img
-        class="action-button"
-        :src="buttonIcon"
-        :alt="buttonDesc"
+        class="action-button left-btn"
+        :src="playButtonIcon"
+        :alt="playButtonDesc"
         @click="playTrack"
       />
-    </div>
-  </div>
+      <img
+        class="action-button"
+        src="@/assets/add_playlist.svg"
+        :style="playlistButtonStyle"
+        :alt="playlistButtonDesc"
+        @click="addToPlaylist"
+      />
+    </td>
+  </tr>
 </template>
 
 <script>
@@ -35,6 +44,11 @@ export default {
         this.$store.commit('switchTrack', this.track);
       }
     },
+    addToPlaylist() {
+      if (!this.isInRemotePlaylist) {
+        this.$store.dispatch('addTrackToPlaylist', this.track);
+      }
+    },
   },
   computed: {
     trackSizeMb() {
@@ -50,11 +64,19 @@ export default {
     isPaused() {
       return this.$store.state.musicPaused;
     },
-    buttonIcon() {
+    playButtonIcon() {
       return this.isSelected && !this.isPaused ? pauseImg : playImg;
     },
-    buttonDesc() {
+    playButtonDesc() {
       return this.isSelected && !this.isPaused ? 'Pause' : 'Play';
+    },
+    playlistButtonDesc() {
+      return this.isInRemotePlaylist ? 'Track already in playlist' : 'Add to playlist';
+    },
+    playlistButtonStyle() {
+      return {
+        opacity: this.isInRemotePlaylist ? 0.3 : 1,
+      };
     },
     highlightStyle() {
       if (this.isSelected) {
@@ -68,6 +90,12 @@ export default {
         color: 'black',
       };
     },
+    isInRemotePlaylist() {
+      let t = this.track;
+      return this.$store.getters.remotePlaylist.some(
+        (track) => t.filename === track.filename && t.albumName === track.albumName,
+      );
+    },
   },
 };
 </script>
@@ -75,56 +103,43 @@ export default {
 <style scoped>
 .track-entry {
   background-color: cornsilk;
-  display: flex;
   border-bottom: 1px solid gray;
-  height: 60px;
-}
-
-.track-data {
-  height: 60px;
-  display: flex;
-  justify-content: space-between;
-  width: 95%;
-  padding-left: 5px;
-  padding-right: 5px;
 }
 
 .album-title {
   font-family: sans-serif;
   font-size: 1.2em;
-  margin-top: auto;
-  margin-bottom: auto;
+  text-align: start;
+  padding-left: 5px;
 }
 
 .track-title {
   font-family: sans-serif;
   font-size: 1.2em;
-  margin-top: auto;
-  margin-bottom: auto;
+  text-align: center;
 }
 
 .file-size {
   font-family: sans-serif;
   font-size: 1.2em;
-  margin-top: auto;
-  margin-bottom: auto;
+  text-align: end;
+  padding-right: 5px;
 }
 
-.track-button {
-  width: 5%;
-  height: 100%;
+.track-buttons {
+  width: 10%;
 }
 
 .action-button {
-  width: 100%;
+  width: 50%;
 }
 
-.track-button .action-button {
+.track-buttons .action-button {
   visibility: hidden;
   background-color: bisque;
 }
 
-.track-button:hover .action-button {
+.track-buttons:hover .action-button {
   visibility: visible;
 }
 
@@ -133,5 +148,15 @@ img {
   height: 60px;
   cursor: pointer;
   padding: 5px 3px 5px 7px;
+  vertical-align: bottom;
+}
+
+.left-btn {
+  border-right: 1px solid gray;
+}
+
+td {
+  border-bottom: 1px solid gray;
+  box-sizing: border-box;
 }
 </style>
