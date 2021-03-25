@@ -24,7 +24,7 @@ export default {
         trackList.sort((a, b) => a.index - b.index);
         commit('addAlbumTrackList', { trackList, albumName });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   },
   fetchRemotePlaylist({ commit }) {
     axios.post('http://localhost:3000/getPlaylist')
@@ -36,7 +36,6 @@ export default {
   addTrackToPlaylist({ commit }, track) {
     axios.post('http://localhost:3000/addTrackToPlaylist', JSON.stringify(track), { 'Content-Type': 'text/plain' })
       .then((response) => {
-        console.log(response);
         commit('addTrackToPlaylist', response.data);
       })
       .catch((error) => console.error(error));

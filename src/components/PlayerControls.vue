@@ -29,8 +29,20 @@
           @click="nextTrack"
         />
       </div>
+      <div class="progress">
+        <input
+          type="range"
+          class="progressbar"
+          min="0"
+          :max="Math.trunc(trackDuration)"
+          @input="changeTimestamp"
+          :value="timeElapsed"
+        />
+      </div>
     </div>
-    <div class="rightside"></div>
+    <div class="rightside">
+      <span v-if="currentTrack">{{ durationDisplay }}</span>
+    </div>
   </div>
 </template>
 
@@ -39,6 +51,12 @@ const playImage = require('../assets/play.svg');
 const pauseImage = require('../assets/pause.svg');
 
 export default {
+  data() {
+    return {
+      trackDuration: 0,
+      timeElapsed: 0,
+    };
+  },
   methods: {
     changePlayingState() {
       if (this.currentTrack) {
@@ -50,6 +68,9 @@ export default {
     },
     nextTrack() {
       this.$store.commit('goForward');
+    },
+    changeTimestamp(e) {
+      this.$refs.player.currentTime = e.target.value;
     },
   },
   computed: {
@@ -76,6 +97,17 @@ export default {
     minimumPlaylistTrackIndex() {
       return this.$store.getters.minimumTrackIndex;
     },
+    durationDisplay() {
+      function timeString(secs) {
+        function leadingZero(time) {
+          return `0${time.toString()}`.substr(-2);
+        }
+        return `${leadingZero(Math.floor(secs / 60))}:${leadingZero(secs % 60)}`;
+      }
+      return `${timeString(Math.trunc(this.timeElapsed))}/${timeString(
+        Math.trunc(this.trackDuration),
+      )}`;
+    },
   },
   watch: {
     musicPaused(paused) {
@@ -89,10 +121,24 @@ export default {
       if ((!oldT && newT) || newT.filename !== oldT.filename || newT.albumName !== oldT.albumName) {
         this.$refs.audiosrc.src = this.trackUrl;
         this.$refs.player.load();
-        this.$refs.player.play();
-        this.$store.commit('switchPlayingState', false);
       }
     },
+    timeElapsed(value) {
+      // TODO check if works (after fixing progress bar)
+      if (value === this.trackDuration) {
+        this.$store.commit('goForward');
+      }
+    },
+  },
+  mounted() {
+    this.$refs.player.addEventListener('timeupdate', (e) => {
+      this.timeElapsed = e.target.currentTime;
+    });
+    this.$refs.player.addEventListener('loadedmetadata', (e) => {
+      e.target.play();
+      this.trackDuration = e.target.duration;
+      this.$store.commit('switchPlayingState', false);
+    });
   },
 };
 </script>
@@ -121,6 +167,12 @@ span {
 
 .rightside {
   width: 30%;
+  color: white;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 2.4em;
 }
 
 .center {
@@ -132,7 +184,26 @@ span {
   width: 30%;
   display: flex;
   justify-content: space-around;
-  height: 200px;
+  height: 170px;
+}
+
+.progress {
+  height: 30px;
+  text-align: center;
+}
+
+.progressbar {
+  width: 100%;
+  appearance: none;
+  background-color: cornflowerblue;
+}
+
+.progressbar::-webkit-slider-thumb {
+  appearance: none;
+  height: 20px;
+  width: 20px;
+  background-color: blue;
+  cursor: pointer;
 }
 
 audio {

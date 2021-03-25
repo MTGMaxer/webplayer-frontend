@@ -49,9 +49,6 @@ export default {
   watch: {
     currentAlbum() {
       this.fetchTracks();
-      console.log(this.currentAlbum);
-      console.log(this.trackList);
-      console.log('----------------------------------');
     },
   },
   mounted() {
