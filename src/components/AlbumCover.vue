@@ -13,7 +13,7 @@ export default {
   },
   computed: {
     coverUrl() {
-      return `http://localhost:3000/media/albums/${this.album}/cover.jpg`;
+      return `http://localhost:3000/media/albums/${encodeURIComponent(this.album)}/cover.jpg`;
     },
   },
   methods: {
@@ -29,7 +29,7 @@ export default {
 .cover-container {
   display: inline-block;
   height: 150px;
-  widows: 150px;
+  width: 150px;
   cursor: pointer;
 }
 

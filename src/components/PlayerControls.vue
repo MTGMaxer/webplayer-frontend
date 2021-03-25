@@ -86,9 +86,15 @@ export default {
     musicPaused() {
       return this.$store.state.musicPaused;
     },
+    encodedAlbum() {
+      return encodeURIComponent(this.currentTrack.albumName);
+    },
+    encodedTrack() {
+      return encodeURIComponent(this.currentTrack.filename);
+    },
     trackUrl() {
       return this.currentTrack
-        ? `http://localhost:3000/media/albums/${this.currentTrack.albumName}/${this.currentTrack.filename}`
+        ? `http://localhost:3000/media/albums/${this.encodedAlbum}/${this.encodedTrack}`
         : '';
     },
     maximumPlaylistTrackIndex() {
