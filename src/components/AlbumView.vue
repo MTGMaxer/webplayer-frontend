@@ -1,6 +1,12 @@
 <template>
   <div>
     <table>
+      <colgroup>
+        <col span="1" style="width: 36%" />
+        <col span="1" style="width: 30%" />
+        <col span="1" />
+        <col span="1" />
+      </colgroup>
       <tr>
         <th></th>
         <th class="header">

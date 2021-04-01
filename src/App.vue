@@ -104,7 +104,7 @@ body {
   background-color: rosybrown;
   padding: 10px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   overflow-x: auto;
 }
 
