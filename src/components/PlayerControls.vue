@@ -130,9 +130,8 @@ export default {
       }
     },
     timeElapsed(value) {
-      // TODO check if works (after fixing progress bar)
       if (value === this.trackDuration) {
-        this.$store.commit('goForward');
+        this.nextTrack();
       }
     },
   },
